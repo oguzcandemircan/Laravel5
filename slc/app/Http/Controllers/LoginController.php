@@ -6,6 +6,8 @@ use Auth;
 use App\User;
 use App\yazi;
 use App\gonderi;
+use DB;
+use PDO;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Hash;
@@ -28,7 +30,16 @@ class LoginController  extends Controller
         {
              if (Auth::attempt(['email' => $email,'password' => $password],TRUE))
              {
-             return redirect()->intended('anasayfa');
+                    
+                    if(Auth::user()->onay==0){
+                        
+                    Auth::logout();
+                    return redirect()->intended('giris')->withErrors(["Üyeliğiniz Henüz Onaylanmamış"]);
+                    }
+                    else{
+                    return redirect()->intended('anasayfa');
+
+                    }
              }
              else
              {
@@ -38,7 +49,15 @@ class LoginController  extends Controller
         else{
             if (Auth::attempt(['email' => $email,'password' => $password]))
                 {
+                   if(Auth::user()->onay==0){
+                        
+                    Auth::logout();
+                    return redirect()->intended('giris')->withErrors(["Üyeliğiniz Henüz Onaylanmamış"]);
+                    }
+                    else{
                     return redirect()->intended('anasayfa');
+
+                    }
                 }
                  else
                 {
@@ -59,10 +78,12 @@ class LoginController  extends Controller
     public function sohbet()
     {
       
-      $yazi=new yazi();
-      $yazilar=$yazi->all();
-
-
+      // $yazi=new yazi();
+      //$yazilar=$yazi->orderBy('yazi_id','desc')->limit(5)->get();/// düzenle
+      //Sohbet düzenlenecek
+      $yazilar=DB::table('yazi')->orderBy('yazi_id','desc')->limit(10)->get();
+      $yazilar=$yazilar->reverse();
+     
       return view('admin')->with('yazilar',$yazilar);
     }
 
@@ -122,7 +143,7 @@ class LoginController  extends Controller
 
         if ($_GET)
         {
-           $gelen_yazi=$_GET['yazi'];
+           $gelen_yazi=strip_tags(htmlentities(htmlspecialchars($_GET['yazi'])));
            
            $user=Auth::user();
            $id=$user->id;
@@ -144,11 +165,18 @@ class LoginController  extends Controller
     function kullanicilar()
     {
         $users=User::all();
-        foreach ($users as $user) {
+        $onay=Auth::user()->onay;
+        if($onay==2)
+        {
+
+            return view("user")->with("users",$users);
             
-            echo "Kullanıcı Adı :".$user->name."</br>";
-            echo "Kullanıcı Email :".$user->email."</br></br><hr></hr>";
         }
+        else{
+            Auth::logout();
+            return redirect()->route('giris')->withErrors(["Lütfen Admin Olarak Giriş Yapın!"]);
+        }
+
     }
     function anasayfa()
     {
@@ -250,6 +278,28 @@ class LoginController  extends Controller
 
             return redirect()->route('anasayfa')->withErrors(["İşlem gerçekleştirilemedi..!"]);
         }
+    }
+    function onay()
+    {
+         $kul_id=$_GET['kul_id'];
+         $onay_id=$_GET['onay_id'];
+
+         $user=new User();
+         $update=$user->where('id',$kul_id)->update(['onay'=>$onay_id]);
+         if ($update) {
+             if ($onay_id==1) {
+                 # code...
+                 echo "<div class='alert alert-success'>Üyelik Aktif Edildi.</div>";
+             }
+             else
+             {
+                echo "<div class='alert alert-success'>Üyelik Pasif Edildi.</div>";
+             }
+         }
+         else{
+             echo "<div class='alert alert-danger'>Üyelik aktif pasif işlemi gerçekleştirilemedi!</div>";
+         }
+
     }
 
 }

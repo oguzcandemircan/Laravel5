@@ -4,6 +4,7 @@
 	   <title>Anasayfa</title>
     <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
 </head>
 <body>
 
@@ -36,21 +37,23 @@
 @if($errors->any())
 <h4 class="alert alert-warning">{{$errors->first()}}</h4>
 @endif
-<h3>Gönderiniz Düzenleyin</h3>
+<div class="panel panel-default">
+  <div class="panel-heading">Gönderi Yayınla</div>
+  <div class="panel-body" style="padding: 30px;">
 <?php
     foreach ($gonderiler as $gonderi) {
          
 
     echo Form::open(['route'=>'gonderi_duzenle','method'=>'POST']);
-    echo Form::textarea('gonderi',$gonderi->gonderi,array('class'=>'form-control'));
+    echo Form::textarea('gonderi',$gonderi->gonderi,array('class'=>'form-control ckeditor'));
     echo Form::hidden('id',$gonderi->id);
-    echo Form::hidden('gonderi_id',$gonderi->gonderi_id);
-    echo Form::submit('Düzenlemeyi Tamamla',array('class'=>'btn btn-primary'));   
+    echo Form::hidden('gonderi_id',$gonderi->gonderi_id)."</br>";
+    echo Form::submit('Düzenlemeyi Tamamla',array('class'=>'btn btn-primary pull-right'));   
     
     }
 
 
-?>
+?></div></div>
 </div>
 </body>
 </html>

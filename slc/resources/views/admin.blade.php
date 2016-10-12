@@ -20,7 +20,7 @@ body{
 }
 .chat{
 
-  width: 600px;
+  width: 70%;
   height: 450px;
   background-color:#fff;
   padding: 20px;
@@ -28,8 +28,7 @@ body{
   margin-top: 50px;
   border-radius: 20px;
   overflow: scroll;
-  border-radius: 5px;
-  border:solid 5px black;
+
 
 }
 .yazi{
@@ -54,27 +53,32 @@ height: auto;
 }
 .right{
    float:right;
-   background: red!important;
+  
 }
 .id_al
 {
-  border: solid 2px red;
+  
   padding: 5px;
-  border-radius: 5px;
+ 
 }
 .clear{
   clear: both;
 }
 .container{
-  width: 600px;
+  width: 100%;
   margin: auto;
 
 }
 .yazi_gonder_kutu{
+  width: 70%;
+  margin: auto;
   padding: 30px;
 }
 .txt_area{
-  width: 300px;
+  width:100%;
+}
+.sohbet{
+  float: right;
 }
 </style>
     <body>
@@ -109,36 +113,39 @@ height: auto;
   <?php
 
 
-                  use App\User;
-                 
-                  $user    =new User();
-                  $user_id =$user->id;
+                  $user_id=Auth::user()->id;
 
                 foreach ($yazilar as $yazi)
                 {
                   $id=$yazi->id;
                   if($id==$user_id)
                   {
-                    echo "<div class='id_al' yaziid='".$yazi->yazi_id."' >";
-                    echo "<div class='yazan right'>".$yazi->adi."</div>";
-                    echo "<div class='yazi right'>".$yazi->yazi."</div>";
-                    echo "<div class='tarih '>".$yazi->tarih."</div>";
-                    echo "<div class='clear'></div>";
+                    echo "<div class='id_al sohbet col-md-12' yazan_id='".$id."' kul_id='".$user_id."' yaziid='".$yazi->yazi_id."' >";
+                    echo "<div class='pull-right'><div class='yazan'>".$yazi->adi;
+                    //echo "<span class='tarih pull-right'>".$yazi->tarih."</span>";
                     echo "</div>";
+                    echo "<div class='yazi '>".$yazi->yazi."</div>";
+                    
+                    echo "<div class='clear'></div>";
+                    echo "</div></div>";
                   }
                   else {
 
-                    echo "<div class='id_al' yaziid='".$yazi->yazi_id."' >";
-                    echo "<div class='yazan'>".$yazi->adi."</div>";
+                    echo "<div class='id_al' yazan_id='".$id."' kul_id='".$user_id."' yaziid='".$yazi->yazi_id."' >";
+                    echo "<div class='yazan'>".$yazi->adi;
+                    //echo"<span class='tarih pull-right'>".$yazi->tarih."</span>";
+                    echo "</div>";
                     echo "<div class='yazi'>".$yazi->yazi."</div>";
-                    echo "<div class='tarih'>".$yazi->tarih."</div>";
+                    
                     echo "<div class='clear'></div>";
                     echo "</div>";
 
+                  }
 
 
 
-                }
+
+                
               }//Foreach
 
                  ?>
@@ -146,8 +153,17 @@ height: auto;
 </div>
 <div class="container">
     <div class="yazi_gonder_kutu">
-        <textarea type="text" id="yazi_kutu_al" name="yazi" class="txt_area" placeholder="Bir şeyler yazın" rows="10"></textarea>
-        <button class="yazi_gonder" onclick="yazi_gonder()">GÖNDER</button>
+        <textarea type="text" id="yazi_kutu_al" name="yazi" class="txt_area form-control" placeholder="Bir şeyler yazın" rows="10"></textarea><hr></hr>
+          
+              <input type="checkbox" name="enter" id="enter" class="enter" />
+              Enter ile yazı gönderilsin.
+            
+        <div class="form-group pull-right">
+          <button class="yazi_gonder btn btn-primary" onclick="yazi_gonder()">GÖNDER</button>
+          
+          <button class="btn btn-default" onclick="sohbet_temizle()">TEMİZLE</button></br><hr></hr>
+        </div>
+          
     </div>
 </div>
 <div class="hata"></div>
@@ -158,7 +174,7 @@ $(document).ready(function(){
 
  //getir();
     scroll();
-
+    title_deger=1;
 
 });//document
 
@@ -182,13 +198,36 @@ function getir()
    //$(".hata").html("Bir hata algılandı."); 
    getir();
    scroll();
-   }, //Hata alınırsa ekrana bastırılacak veri
+   }, 
   success: function(veri) {
 
        $("#yazdir").append(veri);
+              
+
        if (veri!="") 
         {
-          scroll()
+          scroll();
+          
+          var yazan_id = $('.id_al:last').attr('yazan_id');
+          var kul_id = $('.id_al:last').attr('kul_id');
+
+          if (yazan_id!=kul_id){
+              
+              var yazi = $(".yazi:last").html();
+              var yazan = $(".yazan:last").html()
+              //$(".hata").html(yazan);
+              
+              if (rahatsız_etme)
+              {
+                
+              }
+              bildirim(yazi,yazan);
+              title_degistir(title_deger);
+              title_deger++;
+
+          }
+
+         
         }
 
       }
@@ -201,6 +240,7 @@ function getir()
 
 function yazi_gonder()
 {
+  $(".txt_area").prop("readonly",true);
   var yazi= $('#yazi_kutu_al').val();
    $.ajax({
   type: "GET",
@@ -210,19 +250,115 @@ function yazi_gonder()
    //$(".hata").html("Bir hata algılandı."); 
    yazi_gonder();
    scroll();
+
  }, 
-  success: function(veri) { $("#yazdir").append(veri);}
+  success: function(veri) {
+   $("#yazdir").append(veri); 
+   $(".txt_area").val(""); 
+   $(".txt_area").prop("readonly",false);
+ }
 
   });//ajax
 
 }
+///***************************************/
+
+   
+  function title_degistir(deger)
+
+  {
+    $("title").html("Sohbet("+deger+")");
+    /*x=3;
+    setInterval(function(){
+  
+    if (x%2==0){
+      
+        $("title").html("Sohbet")
+    }
+    else{
+        $("title").html("Sohbet("+deger+")");
+    } 
+    x++;
+       }, 1500);*/
+
+
+  }
+
+$("body").click(function(){
+
+  $("title").html("Sohbet");
+
+});
+
+
+
+ $('#yazi_kutu_al').keypress(function (e) {
+ var key = e.which;
+ if(key == 13)  // the enter key code
+  {
+     if(document.getElementById('enter').checked)
+    {
+       yazi_gonder();
+    }
+    
+  }
+});
+
+
+
+/*******************************************/
+
+
+
+
+
 
 function scroll()
 {
   $(".chat").scrollTop($("#yazdir").height());
 }
-
+function sohbet_temizle()
+{
+  $("#yazdir").html("Sobet Temizlendi");
+}
 
 </script>
+<script type="text/javascript">
+  function bildirim (yazi,yazan) {
+  // İlk kontrol tarayıcının bu özelliği destekleyip desteklemediğini sorgulamak
+  if (!("Notification" in window)) {
+    alert("Bu tarayıcı web bilgilendirme özelliğini desteklemiyor.");
+  } 
 
+  // Daha önce kullanıcı izin verdi ise
+  else if (Notification.permission === "granted") {
+    // Bilgilendirme popup'ını çıkaralım.
+    var notification = new Notification('SLC Anlık Chat : '+yazan, {
+      body: yazi, 
+      icon: 'http://i.hizliresim.com/pEAdqL.png',
+      tag: 'tag',
+      dir: 'auto',
+      lang: ''
+    });
+  }
+  
+  // Eğer onay yoksa
+  else if (Notification.permission !== 'denied') {
+    // Kullanıcıdan onay ise
+    Notification.requestPermission(function (permission) {
+      // Kullanıcı onaylamadı ise tekrar soralım
+      if (permission === "granted") {
+        // onaylarsa bilgilendirme popup'ı aç
+        var notification = new Notification('SLC Anlık Chat : '+yazan, {
+          body: yazi, 
+          icon: 'http://i.hizliresim.com/pEAdqL.png',
+          tag: 'tag',
+          dir: 'auto',
+          lang: ''
+        });
+       }
+    });
+  }
+}
+</script>
 </html>

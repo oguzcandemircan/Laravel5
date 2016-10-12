@@ -82,6 +82,11 @@ Route::group(['middleware' => ['auth']], function () {
 
 	})->name('yazi_gonder');
 
+	Route::get('onay','LoginController@onay',function()
+	{
+
+	})->name('onay');
+
 });//middleware;
 
 

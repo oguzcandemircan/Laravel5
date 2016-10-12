@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Anasayfa</title>
+	<title>Kullanıcılar</title>
 	<!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-<script src="//cdn.ckeditor.com/4.5.11/basic/ckeditor.js"></script>
 </head>
 <body>
 
@@ -38,53 +37,61 @@
 @if($errors->any())
 <div class="alert alert-success">{{$errors->first()}}</div>
 @endif
+ <div class="sonuc"></div>
 
-<div class="panel panel-default">
-  <div class="panel-heading">Gönderi Yayınla</div>
-  <div class="panel-body" style="padding: 30px;">
-   
+
+
 <?php
-	echo Form::open(array('route' => 'gonderi-gonder','method'=>'POST'));
-	echo Form::textarea('gonderi',null,array('class'=>'form-control','placeholder'=>'Gönderinizi Yazın'));
-	echo "</br>";
-	echo Form::submit('gonder',array('class'=>'btn btn-primary pull-right'));
 
-	
+	foreach ($users as $user) {
+            
+            $onay=$user->onay;
+            if($onay==1)
+            {
+              
+              echo "<select class='form-control' id='".$user->id."' style='width:80px;' onchange='onay(".$user->id.")'><option value='1'>aktif</option><option value='0'>pasif</option></select>";
+              
+            }
+            else
+            {
+              
+              echo "<select class='form-control' id='".$user->id."' style='width:80px;' onchange='onay(".$user->id.")'><option value='0'>pasif</option><option value='1'>aktif</option></select>";
+
+            }
+            
+
+
+            echo "Kullanıcı Adı :".$user->name."</br>";
+            echo "Kullanıcı Email :".$user->email."</br></br><hr></hr>";
+            
+        }
+
 ?>
-  </div>
-</div>
-
-
-   
-<?php
-	
-	 
-	 $user_id=Auth::user()->id;
-	
-	foreach ($gonderiler as $gonderi) {
-
-		$id=$gonderi->id;
-		$adi=$gonderi->adi;
-
-		echo '<div class ="panel panel-default">';
-		echo '<div class ="panel-heading">Gönderen : <a href="http://192.168.1.202/slc/public/profil/'.$id.'">'.$adi.'</a>';
-		if ($user_id==$id) {
-			
-		echo '<a href="http://192.168.1.202/slc/public/gonderi_sil/'.$gonderi->gonderi_id.'" class="pull-right">&nbsp;&nbsp;Sil</a>';
-		echo '<a href="http://192.168.1.202/slc/public/gonderi_gor/'.$gonderi->gonderi_id.'" class="pull-right">Düzenle</a>';
-		}
-		echo '</div>';
-		echo '<div class ="panel-body" style="padding: 30px;">';
-		echo $gonderi->gonderi;
-		echo '</br><hr></hr><span class="pull-right">Gönderi Tarihi :'.$gonderi->tarih.'</span>';
-		echo '</div></div>';
-	}
-
-
-	
-?>
-  
-
+ <input type="checkbox" name="vehicle" value="Bike">Aktif<br>
 </div><!-- /.Container -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+
+
+function onay(id)
+{
+ 
+ var onay_id = $("#"+id).val();
+
+
+   $.ajax({
+  type: "GET",
+  url: "http://192.168.1.202/slc/public/onay",
+  data:"kul_id="+id+"&onay_id="+onay_id,
+  error:function(){$(".sonuc").html("Bir hata algılandı."); }, 
+  success: function(veri) {
+   $(".sonuc").html(veri);
+ }
+
+  });//ajax
+
+}
+</script>
 </body>
 </html>
