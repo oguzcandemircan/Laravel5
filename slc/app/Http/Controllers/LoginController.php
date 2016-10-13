@@ -84,7 +84,7 @@ class LoginController  extends Controller
       $yazilar=DB::table('yazi')->orderBy('yazi_id','desc')->limit(10)->get();
       $yazilar=$yazilar->reverse();
      
-      return view('admin')->with('yazilar',$yazilar);
+      return view('sohbet')->with('yazilar',$yazilar);
     }
 
 

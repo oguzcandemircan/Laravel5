@@ -20,27 +20,27 @@
                     foreach ($yazilar as $yazi){
                   $id=$yazi->id;
 
-                  if($id==$user_id)
+                if($id==$user_id)
                   {
-                     echo "<div class='id_al sohbet col-md-12' yazan_id='".$id."' kul_id='".$user_id."' yaziid='".$yazi->yazi_id."' >";
-                    echo "<div class='pull-right'><div class='yazan'>".$yazi->adi;
-                    //echo "<span class='tarih pull-right'>".$yazi->tarih."</span>";
-                    echo "</div>";
-                    echo "<div class='yazi '>".$yazi->yazi."</div>";
-                    
-                    echo "<div class='clear'></div>";
-                    echo "</div></div>";
+                   
+                   
+                    echo '<div class="row sag id_al" yazan_id="'.$id.'" kul_id="'.$user_id.'" yaziid="'.$yazi->yazi_id.'">';
+                    echo '<div class="col-md-7 col-sm-6"></div>';
+                    echo '<div class="col-md-5 col-sm-6 div_sag yazi">'.$yazi->yazi.'</div>';
+                    echo '</div>';//row
+                   
                   }
-                  else {
+                  else{
 
-                    echo "<div class='id_al' kul_id='".$user_id."' yaziid='".$yazi->yazi_id."' >";
-                    echo "<div class='yazan'>".$yazi->adi."</div>";
-                    echo "<div class='yazi'>".$yazi->yazi."</div>";
-                   // echo "<div class='tarih'>".$yazi->tarih."</div>";
-                    echo "<div class='clear'></div>";
-                    echo "</div>";
+                    echo '<div class="row sol id_al" yazan_id="'.$id.'" kul_id="'.$user_id.'" yaziid="'.$yazi->yazi_id.'">';
+                    echo '<div class="col-md-5 col-sm-6 div_sol">';
+                    echo '<span class="yazan_span yazan">'.$yazi->adi.'</span><hr class="hr"></hr>';
+                    echo '<span class="yazi">'.$yazi->yazi.'</span>';
+                    echo '</div>';
+                    echo '</div>';
 
                   }
+                  
 
 
 
