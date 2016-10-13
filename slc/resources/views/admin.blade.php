@@ -20,7 +20,7 @@ body{
 }
 .chat{
 
-  width: 70%;
+  width: 90%;
   height: 450px;
   background-color:#fff;
   padding: 20px;
@@ -79,6 +79,9 @@ height: auto;
 }
 .sohbet{
   float: right;
+}
+audio{
+  display: none;
 }
 </style>
     <body>
@@ -151,13 +154,19 @@ height: auto;
                  ?>
 </div>
 </div>
+
 <div class="container">
     <div class="yazi_gonder_kutu">
         <textarea type="text" id="yazi_kutu_al" name="yazi" class="txt_area form-control" placeholder="Bir şeyler yazın" rows="10"></textarea><hr></hr>
-          
-              <input type="checkbox" name="enter" id="enter" class="enter" />
-              Enter ile yazı gönderilsin.
+          <div class="form-group pull-left">
             
+              
+
+              <input type="checkbox" name="enter" checked="checked" id="enter" class="enter" />
+              Enter ile yazı gönderilsin.
+              <button class="" name="time1" onclick="zaman(30,1)" id="time1">Rahatsız Etme  +30</button>
+              <button class="" name="time2" onclick="zaman(30,0)" id="time2">Rahatsız Etme  -30</button>
+          </div>
         <div class="form-group pull-right">
           <button class="yazi_gonder btn btn-primary" onclick="yazi_gonder()">GÖNDER</button>
           
@@ -167,6 +176,8 @@ height: auto;
     </div>
 </div>
 <div class="hata"></div>
+<div class="kul_zaman"></div>
+<div class="gercek_zaman"></div>
     </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
@@ -175,10 +186,15 @@ $(document).ready(function(){
  //getir();
     scroll();
     title_deger=1;
-
+    
+    
+    
 });//document
 
-
+var d1 = new Date (); 
+    var d2 = new Date ();
+    $(".gercek_zaman").html("saat :"+d1.getHours()+" dakika :"+d1.getMinutes());
+    $(".kul_zaman").html("saat :"+d2.getHours()+" dakika :"+d2.getMinutes());
  setInterval(function(){
   
     getir();
@@ -217,13 +233,20 @@ function getir()
               var yazan = $(".yazan:last").html()
               //$(".hata").html(yazan);
               
-              if (rahatsız_etme)
-              {
-                
-              }
-              bildirim(yazi,yazan);
-              title_degistir(title_deger);
-              title_deger++;
+              
+                if (zaman(1,0)==true)
+                {
+                  bildirim(yazi,yazan);
+                  title_degistir(title_deger);
+                  title_deger++;
+                  $('body').append('<audio controls controls autoplay><source src="http://192.168.1.202/slc/resources/views/ding.mp3" type="audio/mpeg">Tarayıcınız audio elementini desteklemiyor.</audio>')
+                 
+                }
+                else{
+                  
+                }
+              
+              
 
           }
 
@@ -237,6 +260,51 @@ function getir()
 
 
 }//function
+
+ 
+//alert ( " saat : "+d1.getHours()+" dakika :"+d1.getMinutes() );
+
+function zaman(dk,tur)
+{
+  var bildirim=false;
+  if (tur==1) 
+  {
+    var kul_dakika=d2.setMinutes ( d2.getMinutes() + dk );
+    //alert ( " saat : "+d2.getHours()+" dakika :"+d2.getMinutes() );
+    $(".kul_zaman").html("saat :"+d2.getHours()+" dakika :"+d2.getMinutes());
+
+    
+   
+  }
+  else{
+    var kul_dakika=d2.setMinutes ( d2.getMinutes() - dk );
+    //alert ( " saat : "+d2.getHours()+" dakika :"+d2.getMinutes() );
+    $(".kul_zaman").html("saat :"+d2.getHours()+" dakika :"+d2.getMinutes());
+    
+  }
+          
+     if(d1.getHours()>=d2.getHours())
+    {             
+       //alert("Bildirim alabilir saat");
+      if(d1.getMinutes()>d2.getMinutes())
+      {    
+            //alert("Bildirim alabilir dk");
+           bildirim=true;
+      }
+      else{
+
+          bildirim=false;
+      }
+    }
+    else{
+      bildirim=false;
+    }
+
+    return bildirim;
+
+  //if (kul_dakika>60) { kul_dakika=0;}
+  //$(".hata").html(kul_dakika);
+}
 
 function yazi_gonder()
 {
