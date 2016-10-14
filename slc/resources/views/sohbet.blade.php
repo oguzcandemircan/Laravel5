@@ -18,7 +18,7 @@ body{
 .chat{
 
   width: 90%;
-  height:70%;
+  height:600px;
   overflow: scroll;
   padding: 20px;
   margin: auto;
@@ -65,6 +65,7 @@ height: auto;
 }
 .txt_area{
   width:100%;
+  border-radius: 0px!important;
 }
 .sohbet{
   float: right;
@@ -109,12 +110,22 @@ audio{
     .sag,.sol{
         margin-bottom: 20px;
     }
+    .timeout{
+      font-weight:bold;
+      padding-top: 50px;
+      font-size:22px;
+      color:red;
+      text-align: center;
+    }
+    .btn{
+      border-radius: 0px!important;
+    }
     /** yeni css **/
-</style>
+    </style>
     </head>
     
     <body>
-    
+   
 <!-- Static navbar -->
       <nav class="navbar navbar-default">
         <div class="container-fluid">
@@ -213,8 +224,8 @@ audio{
         <div class="row">
             
             <div class="col-md-12 text-center">
-                    <button class="" name="time1" onclick="zaman(30,1)" id="time1">Rahatsız Etme  +30</button>
-                    <button class="" name="time2" onclick="zaman(30,0)" id="time2">Rahatsız Etme  -30</button>
+                    <button class="btn btn-success" name="time1" onclick="zaman(30,1)" id="time1">Rahatsız Etme  +30</button>
+                    <button class="btn btn-default" name="time2" onclick="zaman(30,0)" id="time2">Rahatsız Etme  -30</button>
                     <hr class="hr2"></hr><div class="kul_zaman"></div>
             </div>
         </div>
@@ -227,6 +238,9 @@ audio{
 
 <div class="gercek_zaman" style="display:none"></div>
     </body>
+
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -234,7 +248,7 @@ $(document).ready(function(){
  //getir();
     scroll();
     title_deger=1;
-    
+    $("body").scrollTop(400);
     
     
 });//document
@@ -256,7 +270,7 @@ function getir()
 
   $.ajax({
   type: "GET",
-  url: "http://192.168.1.202/slc/public/yazi_al",
+  url: "{{ URL::asset('yazi_al') }}",
   data:"id="+id,
   error:function(){ 
    //$(".hata").html("Bir hata algılandı."); 
@@ -355,11 +369,26 @@ function zaman(dk,tur)
 
 function yazi_gonder()
 {
+  if ($(".txt_area").val()=="" | $(".txt_area").val()==null)
+  { $(".txt_area").prop("disabled",true);
+    $(".txt_area").addClass("timeout");
+    $(".txt_area").val("5 Saniye boyunca mesaj göndermeniz engellendi!");
+    alert("Boş mesaj gönderdiğiniz için 5 saniye boyunca mesaj göndermeniz engellendi.");
+    setTimeout(function(){
+      $(".txt_area").prop("disabled",false);
+      $(".txt_area").val("");
+      $(".txt_area").removeClass("timeout");
+
+    },5000);
+  }
+  else
+  {
+
   $(".txt_area").prop("readonly",true);
   var yazi= $('#yazi_kutu_al').val();
    $.ajax({
   type: "GET",
-  url: "http://192.168.1.202/slc/public/yazi_gonder",
+  url: "{{ URL::asset('yazi_gonder') }}",
   data:"yazi="+yazi,
   error:function(){
    //$(".hata").html("Bir hata algılandı."); 
@@ -373,8 +402,9 @@ function yazi_gonder()
    $(".txt_area").prop("readonly",false);
  }
 
-  });//ajax
 
+  });//ajax
+}//else
 }
 ///***************************************/
 
@@ -431,6 +461,7 @@ $("body").click(function(){
 function scroll()
 {
   $(".chat").scrollTop($("#yazdir").height());
+  
 }
 function sohbet_temizle()
 {

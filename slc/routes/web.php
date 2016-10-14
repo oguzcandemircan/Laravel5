@@ -12,7 +12,6 @@
 */
 
 
-
 Route::get('/', function () {
 	redirect()->route('giris');
     return view('welcome');
@@ -32,57 +31,57 @@ Route::group(['middleware' => ['auth']], function () {
 
      // bu kısma her eklediğin  routelandırma auth korumasında oluçaktır.login olmayan bu kısma ulaşamıyacak.
 
-    Route::get('sohbet' ,'LoginController@sohbet', function()
+    Route::get('sohbet' ,'sohbetController@sohbet', function()
         {
 
 
         });
 
 
-    Route::get('anasayfa','LoginController@anasayfa',function()
+    Route::get('anasayfa','sohbetController@anasayfa',function()
     	{
 
     	})->name('anasayfa');
 
-	Route::post('gonderi-gonder','LoginController@gonderi',function(){
+	Route::post('gonderi-gonder','sohbetController@gonderi',function(){
 
 
 	})->name('gonderi-gonder');
 	
-	Route::get('profil/{id}','LoginController@user',function(){
+	Route::get('profil/{id}','sohbetController@user',function(){
 
 	})->name('profil');
 
-	Route::get('gonderi_sil/{id}','LoginController@gonderi_sil',function(){
+	Route::get('gonderi_sil/{id}','sohbetController@gonderi_sil',function(){
 
 	})->name('gonderi_sil');
 
-	Route::get('gonderi_gor/{id}','LoginController@gonderi_gor',function(){
+	Route::get('gonderi_gor/{id}','sohbetController@gonderi_gor',function(){
 
 	})->name('gonderi');
 
-	Route::post('gonderi_duzenle','LoginController@gonderi_duzenle',function(){
+	Route::post('gonderi_duzenle','sohbetController@gonderi_duzenle',function(){
 
 	})->name('gonderi_duzenle');
 
-	Route::get('users','LoginController@kullanicilar',function(){
+	Route::get('users','sohbetController@kullanicilar',function(){
 
 	});
 
-	Route::get('cikis','LoginController@cikis',function(){
+	Route::get('cikis','sohbetController@cikis',function(){
 
 
 	})->name('cikis');
 
-	Route::get('yazi_al','LoginController@yazi_al',function(){
+	Route::get('yazi_al','sohbetController@yazi_al',function(){
  
 	})->name('yazi_al');
 
-	Route::get('yazi_gonder','LoginController@yazi_gonder',function(){
+	Route::get('yazi_gonder','sohbetController@yazi_gonder',function(){
 
 	})->name('yazi_gonder');
 
-	Route::get('onay','LoginController@onay',function()
+	Route::get('onay','sohbetController@onay',function()
 	{
 
 	})->name('onay');
@@ -90,7 +89,7 @@ Route::group(['middleware' => ['auth']], function () {
 });//middleware;
 
 
-Route::get('kayit','LoginController@kullaniciEkle',function(){
+Route::get('kayit','sohbetController@kullaniciEkle',function(){
 
 
 })->name('kayit');
@@ -102,17 +101,22 @@ Route::get('kayit-ol',function(){
 })->name('kayit-ol');
 
 
-Route::get('login','LoginController@authenticate',function()
+Route::get('login','sohbetController@authenticate',function()
 {
 
 })->name('login');
 
-Route::get('giris','LoginController@giris',function(){
+Route::get('giris','sohbetController@giris',function(){
 
 
 })->name('giris');
 
 
+
+Route::get('mail','sohbetController@mail_gonder',function(){
+
+	
+});
 
 
 

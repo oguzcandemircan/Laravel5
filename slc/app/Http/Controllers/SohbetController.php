@@ -8,12 +8,13 @@ use App\yazi;
 use App\gonderi;
 use DB;
 use PDO;
+use Mail;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Authenticatable;
 
-class LoginController  extends Controller
+class sohbetController  extends Controller
 {
     /**
      * Show the profile for the given user.
@@ -81,7 +82,7 @@ class LoginController  extends Controller
       // $yazi=new yazi();
       //$yazilar=$yazi->orderBy('yazi_id','desc')->limit(5)->get();/// düzenle
       //Sohbet düzenlenecek
-      $yazilar=DB::table('yazi')->orderBy('yazi_id','desc')->limit(10)->get();
+      $yazilar=DB::table('yazi')->orderBy('yazi_id','desc')->limit(30)->get();
       $yazilar=$yazilar->reverse();
      
       return view('sohbet')->with('yazilar',$yazilar);
@@ -143,7 +144,13 @@ class LoginController  extends Controller
 
         if ($_GET)
         {
-           $gelen_yazi=strip_tags(htmlentities(htmlspecialchars($_GET['yazi'])));
+            $gelen_yazi=strip_tags($_GET['yazi']);
+            if ($gelen_yazi=="")
+            {
+             echo "<script>alert('Boş Mesaj Gönderilemez!')</script>";   
+            }
+           else{
+            
            
            $user=Auth::user();
            $id=$user->id;
@@ -155,6 +162,7 @@ class LoginController  extends Controller
            $yazi->yazi=$gelen_yazi;
            $save=$yazi->save();
            
+           }
 
         }
         else{
@@ -301,5 +309,16 @@ class LoginController  extends Controller
          }
 
     }
+    function mail_gonder()
+    {
+        /* $data = ['ad' => 'Tuana Şeyma', 'soyad' => 'Eldem'];
+
+        Mail::send('mail',$data,function($mesaj)use($data)
+        {
+        $mesaj->to("demircanoguzcan@gmail.com")->subject("E posta başlığı");
+        });*/
+    }
+
+     
 
 }
