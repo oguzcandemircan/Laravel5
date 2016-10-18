@@ -144,7 +144,7 @@ class sohbetController  extends Controller
 
         if ($_GET)
         {
-            $gelen_yazi=strip_tags($_GET['yazi']);
+            $gelen_yazi=strip_tags($_GET['yazi'],"<img><iframe><a>");
             if ($gelen_yazi=="")
             {
              echo "<script>alert('Boş Mesaj Gönderilemez!')</script>";   

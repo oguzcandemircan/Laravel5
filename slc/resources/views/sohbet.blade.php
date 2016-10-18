@@ -7,125 +7,11 @@
 
         <title>Sohbet</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-        <style>
-  @import url('https://fonts.googleapis.com/css?family=Open+Sans&subset=latin-ext');
-body{
-  background-color: #f9f9f9;
-  font-size: 14px;
-  font-family: 'Open Sans', sans-serif;
-  line-height:1.5;
-}
-.chat{
-
-  width: 90%;
-  height:600px;
-  overflow: scroll;
-  padding: 20px;
-  margin: auto;
-  margin-top: 50px;
- 
-
-}
-.yazi_style{
-
-  width: 30% ;
-  padding: 10px;
-  background: #4080ff;
-  color:#fff;
-  border-radius: 5px;
-
-}
-.tarih{
-
-width: auto;
-height: auto;
-  color:#111;
-  font-size: 12px;
-}
-.right{
-   float:right;
-
-  
-}
-
-}
-.clear{
-  clear: both;
-}
-.container{
-  width: 100%;
-  margin: auto;
-
-}
-.yazi_gonder_kutu{
-  width: 100%;
-  margin: auto;
-  padding: 30px;
-    
-}
-.txt_area{
-  width:100%;
-  border-radius: 0px!important;
-}
-.sohbet{
-  float: right;
-}
-audio{
-  display: none;
-}
-/*** Yeni Css ***/
-
-    
-    .div_sol{
-        background: #f2f2f2;
-        color:#010101;
-        padding: 15px;
-        border: solid 1px #f2f2f2;
-        
-        font-family: 'Open Sans', sans-serif;
-    }
-    .div_sag{
-        background: #4080ff;
-    color:#fff;
-        padding: 15px;
-        border: solid 1px #4080ff;
-       
-        
-    }
-    .yazan_span{
-        color:#4080ff;
-        font-weight: bold;
-        font-size:15px!important;
-    }
-   
-    .hr2{
-        margin: 5px!important;
-        
-    }
-    .hr2{
-        margin-top:15px!important;
-        
-    }
-  
-    .sag,.sol{
-        margin-bottom: 20px;
-    }
-    .timeout{
-      font-weight:bold;
-      padding-top: 50px;
-      font-size:22px;
-      color:red;
-      text-align: center;
-    }
-    .btn{
-      border-radius: 0px!important;
-    }
-    /** yeni css **/
-    </style>
+ {!! Html::style('css/sohbet.css'); !!}
+      
     </head>
     
     <body>
-   
 <!-- Static navbar -->
       <nav class="navbar navbar-default">
         <div class="container-fluid">
@@ -237,12 +123,93 @@ audio{
 <div class="hata"></div>
 
 <div class="gercek_zaman" style="display:none"></div>
+
+<div class="goster">
+  
+</div>
     </body>
 
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
+
+  function link()
+{
+  var kutu =$(".txt_area").val().replace(/\n/g, " ");
+  //$(".goster").html(kutu);
+  
+  
+  
+  var dizi=new Array();
+  dizi = kutu.split(' ')
+  for (var i = 0; i <dizi.length; i++) {
+    var link = dizi[i];
+    var htp =link.substring(0,7);
+    var htps =link.substring(0,8);
+    var youtube = link.substring(7,31);
+    var youtubes= link.substring(8,32);
+    $(".goster").append(youtube);
+    
+    if(htp=="http://")
+    {
+
+      var png=link.substring(link.length-4,link.length);
+      if (png==".png")
+      {
+        link="<a href='"+link+"' target='_blank'><img src='"+link+"' /></a>";
+        //$('.goster').append("</br>"+link);
+        dizi[i]=link;
+      }
+      else if (png==".jpg")
+      {
+        link="<a href='"+link+"' target='_blank'><img src='"+link+"' /></a>";
+        //$('.goster').append("</br>"+link);
+        dizi[i]=link;
+      }
+      else if(youtube="www.youtube.com/watch?v=")
+      { 
+
+        link=link.substring(32,link.length);
+        var video='<iframe width="560" height="315" src="http://www.youtube.com/embed/'+link+'" frameborder="0" allowfullscreen></iframe>';
+        dizi[i]=video;
+      }
+      
+    }
+    if(htps=="https://")
+    {
+
+      if (png==".png")
+      {
+        link="<a href='"+link+"' target='_blank'><img src='"+link+"' /></a>";
+        //$('.goster').append("</br>"+link);
+        dizi[i]=link;
+      }
+        if (png==".jpg")
+      {
+        link="<a href='"+link+"' target='_blank'><img src='"+link+"' /></a>";
+        //$('.goster').append("</br>"+link);
+        dizi[i]=link;
+      }
+      if(youtubes="www.youtube.com/watch?v=")
+      {   
+          link=link.substring(32,link.length);
+         var video='<iframe src="https://www.youtube.com/embed/'+link+'" frameborder="0" allowfullscreen></iframe>';
+        dizi[i]=video;
+      }
+
+    }
+
+    
+    //$(".goster").append("</br>"+link);
+  }
+  var temiz = dizi.join(" ");
+  //$('.goster').html("</br>"+temiz);
+  //$('.txt_area').html(temiz);
+
+  return temiz;
+  
+}
 $(document).ready(function(){
 
  //getir();
@@ -389,7 +356,7 @@ function yazi_gonder()
    $.ajax({
   type: "GET",
   url: "{{ URL::asset('yazi_gonder') }}",
-  data:"yazi="+yazi,
+  data:"yazi="+link(),
   error:function(){
    //$(".hata").html("Bir hata algılandı."); 
    yazi_gonder();
@@ -471,6 +438,10 @@ function sohbet_temizle()
 </script>
 <script type="text/javascript">
   function bildirim (yazi,yazan) {
+
+    var yazi = yazi.replace(/(<([^>]+)>)/ig,"");
+
+
   // İlk kontrol tarayıcının bu özelliği destekleyip desteklemediğini sorgulamak
   if (!("Notification" in window)) {
     alert("Bu tarayıcı web bilgilendirme özelliğini desteklemiyor.");
