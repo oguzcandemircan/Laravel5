@@ -142,9 +142,76 @@ class sohbetController  extends Controller
     function yazi_gonder()
     {
 
-        if ($_GET)
+        if ($_POST)
         {
-            $gelen_yazi=strip_tags($_GET['yazi'],"<img><iframe><a>");
+            
+            
+        function  ayrıstır($gelen_yazi){
+            
+            $gelen_dizi=explode(" ",$gelen_yazi);
+            
+            for ($i=0; $i <count($gelen_dizi); $i++) { 
+            
+            $kontrol=$gelen_dizi[$i];
+            
+            $http=substr($kontrol,0,7);
+            $https=substr($kontrol,0,8);
+            $format =$kontrol=substr($kontrol,-3);
+            $youtube=substr($gelen_dizi[$i],7,24);
+            $youtubes=substr($gelen_dizi[$i],8,24);
+    
+
+
+
+    if ($http=="http://") {
+
+      if ($format=="png" | $format=="jpg") {
+        
+         $resim='<a  ><img data-toggle="modal" data-target="#exampleModal" data-resim="'.$gelen_dizi[$i].'" src="'.$gelen_dizi[$i].'" /></a>';
+         $gelen_dizi[$i]=$resim;
+
+
+      }
+      else if($youtube=="www.youtube.com/watch?v="){
+
+         $you_link=substr($gelen_dizi[$i],31);
+         $you='<iframe id="ytplayer" type="text/html" width="640" height="390" src="http://www.youtube.com/embed/'.$you_link.'?modestbranding=1&&rel=0&&showinfo=0&&iv_load_policy=3" frameborder="0" allowfullscreen ></iframe>';
+          $gelen_dizi[$i]=$you;
+
+      }
+      
+    }
+    else if($https=="https://"){
+
+      if ($format=="png" | $format=="jpg") {
+        
+         $resim='<a  ><img data-toggle="modal" data-target="#exampleModal" data-resim="'.$gelen_dizi[$i].'" src="'.$gelen_dizi[$i].'" /></a>';
+         $gelen_dizi[$i]=$resim;
+
+
+      }
+      else if($youtubes=="www.youtube.com/watch?v="){
+
+         $you_link=substr($gelen_dizi[$i],32);
+          $you='<iframe id="ytplayer" type="text/html" width="640" height="390" src="http://www.youtube.com/embed/'.$you_link.'?modestbranding=1&&rel=0&&showinfo=0&&iv_load_policy=3" frameborder="0" allowfullscreen ></iframe>';
+           $gelen_dizi[$i]=$you;
+           
+      }
+
+
+    }
+
+  }//for
+
+  $yazi=implode(" ",$gelen_dizi);
+
+  return $yazi;
+
+  }//function
+
+          $gelen_yazi=ayrıstır($_POST['yazi']);
+            
+
             if ($gelen_yazi=="")
             {
              echo "<script>alert('Boş Mesaj Gönderilemez!')</script>";   
@@ -167,7 +234,7 @@ class sohbetController  extends Controller
         }
         else{
 
-            echo "GET Gelmedi";
+            echo "POST Gelmedi";
         }
     }
     function kullanicilar()

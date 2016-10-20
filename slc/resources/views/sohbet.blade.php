@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>Sohbet</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
@@ -81,6 +82,7 @@
 
 <div class="container">
     <div class="yazi_gonder_kutu">
+    
         <div class="row">
             <div class="col-md-1"></div>
             <div class="col-md-10">
@@ -116,7 +118,6 @@
             </div>
         </div>
           
-        
           
     </div><!-- yazi gönder kutu -->
 </div><!-- Container -->
@@ -124,146 +125,40 @@
 
 <div class="gercek_zaman" style="display:none"></div>
 
-<div class="goster">
-  
-</div>
+<div class="goster"></div>
     </body>
 
 
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+{!! Html::script('js/sohbet.js'); !!}
 <script type="text/javascript">
-
-  function link()
-{
-  var kutu =$(".txt_area").val().replace(/\n/g, " ");
-  //$(".goster").html(kutu);
   
-  
-  
-  var dizi=new Array();
-  dizi = kutu.split(' ')
-  for (var i = 0; i <dizi.length; i++) {
-    var link = dizi[i];
-    var htp =link.substring(0,7);
-    var htps =link.substring(0,8);
-    var youtube = link.substring(7,31);
-    var youtubes= link.substring(8,32);
-    $(".goster").append(youtube);
-    
-    if(htp=="http://")
-    {
-
-      var png=link.substring(link.length-4,link.length);
-      if (png==".png")
-      {
-        link="<a href='"+link+"' target='_blank'><img src='"+link+"' /></a>";
-        //$('.goster').append("</br>"+link);
-        dizi[i]=link;
-      }
-      else if (png==".jpg")
-      {
-        link="<a href='"+link+"' target='_blank'><img src='"+link+"' /></a>";
-        //$('.goster').append("</br>"+link);
-        dizi[i]=link;
-      }
-      else if(youtube="www.youtube.com/watch?v=")
-      { 
-
-        link=link.substring(32,link.length);
-        var video='<iframe width="560" height="315" src="http://www.youtube.com/embed/'+link+'" frameborder="0" allowfullscreen></iframe>';
-        dizi[i]=video;
-      }
-      
-    }
-    if(htps=="https://")
-    {
-
-      if (png==".png")
-      {
-        link="<a href='"+link+"' target='_blank'><img src='"+link+"' /></a>";
-        //$('.goster').append("</br>"+link);
-        dizi[i]=link;
-      }
-        if (png==".jpg")
-      {
-        link="<a href='"+link+"' target='_blank'><img src='"+link+"' /></a>";
-        //$('.goster').append("</br>"+link);
-        dizi[i]=link;
-      }
-      if(youtubes="www.youtube.com/watch?v=")
-      {   
-          link=link.substring(32,link.length);
-         var video='<iframe src="https://www.youtube.com/embed/'+link+'" frameborder="0" allowfullscreen></iframe>';
-        dizi[i]=video;
-      }
-
-    }
-
-    
-    //$(".goster").append("</br>"+link);
-  }
-  var temiz = dizi.join(" ");
-  //$('.goster').html("</br>"+temiz);
-  //$('.txt_area').html(temiz);
-
-  return temiz;
-  
-}
-$(document).ready(function(){
-
- //getir();
-    scroll();
-    title_deger=1;
-    $("body").scrollTop(400);
-    
-    
-});//document
-
-var d1 = new Date (); 
-    var d2 = new Date ();
-    //$(".gercek_zaman").html("saat :"+d1.getHours()+" dakika :"+d1.getMinutes());
-    $(".kul_zaman").html(d2.getHours()+":"+d2.getMinutes());
- setInterval(function(){
-  
-    getir();
-
-  }, 1500);
-
-function getir()
-{
+  function getir(){
   var id = $('.id_al:last').attr('yaziid');
- 
-
   $.ajax({
   type: "GET",
   url: "{{ URL::asset('yazi_al') }}",
   data:"id="+id,
-  error:function(){ 
-   //$(".hata").html("Bir hata algılandı."); 
-   getir();
-   scroll();
-   }, 
+  error:function(){ getir();scroll();}, 
   success: function(veri) {
-
        $("#yazdir").append(veri);
-              
-
        if (veri!="") 
         {
           scroll();
-          
+
           var yazan_id = $('.id_al:last').attr('yazan_id');
           var kul_id = $('.id_al:last').attr('kul_id');
 
           if (yazan_id!=kul_id){
               
               var yazi = $(".yazi:last").html();
-              var yazan = $(".yazan:last").html()
-              //$(".hata").html(yazan);
+              var yazan = $(".yazan:last").html();
               
-              
-                if (zaman(1,0)==true)
+              if (zaman(1,0)==true)
                 {
                   bildirim(yazi,yazan);
                   title_degistir(title_deger);
@@ -274,67 +169,20 @@ function getir()
                 else{
                   
                 }
-              
-              
 
           }
 
-         
         }
 
       }
 
   });//ajax
 
-
-
 }//function
 
- 
+//////////////////////
 
-function zaman(dk,tur)
-{
-  var bildirim=false;
-  if (tur==1) 
-  {
-    var kul_dakika=d2.setMinutes ( d2.getMinutes() + dk );
-    //alert ( " saat : "+d2.getHours()+" dakika :"+d2.getMinutes() );
-    $(".kul_zaman").html(d2.getHours()+":"+d2.getMinutes());
-
-    
-   
-  }
-  else{
-    var kul_dakika=d2.setMinutes ( d2.getMinutes() - dk );
-    //alert ( " saat : "+d2.getHours()+" dakika :"+d2.getMinutes() );
-    $(".kul_zaman").html(d2.getHours()+":"+d2.getMinutes());
-    
-  }
-          
-     if(d1.getHours()>=d2.getHours())
-    {             
-       //alert("Bildirim alabilir saat");
-      if(d1.getMinutes()>d2.getMinutes())
-      {    
-            //alert("Bildirim alabilir dk");
-           bildirim=true;
-      }
-      else{
-
-          bildirim=false;
-      }
-    }
-    else{
-      bildirim=false;
-    }
-
-    return bildirim;
-
-  //if (kul_dakika>60) { kul_dakika=0;}
-  //$(".hata").html(kul_dakika);
-}
-
-function yazi_gonder()
+  function yazi_gonder()
 {
   if ($(".txt_area").val()=="" | $(".txt_area").val()==null)
   { $(".txt_area").prop("disabled",true);
@@ -350,13 +198,16 @@ function yazi_gonder()
   }
   else
   {
-
+ 
   $(".txt_area").prop("readonly",true);
   var yazi= $('#yazi_kutu_al').val();
    $.ajax({
-  type: "GET",
+  type: "POST",
   url: "{{ URL::asset('yazi_gonder') }}",
-  data:"yazi="+link(),
+   headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+  data:"yazi="+yazi,
   error:function(){
    //$(".hata").html("Bir hata algılandı."); 
    yazi_gonder();
@@ -373,109 +224,62 @@ function yazi_gonder()
   });//ajax
 }//else
 }
-///***************************************/
 
+</script>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-body">
+        
+      </div>
    
-  function title_degistir(deger)
+    </div>
+  </div>
+</div>
 
-  {
-    $("title").html("Sohbet("+deger+")");
-    /*x=3;
-    setInterval(function(){
+<script type="text/javascript">
   
-    if (x%2==0){
-      
-        $("title").html("Sohbet")
-    }
-    else{
-        $("title").html("Sohbet("+deger+")");
-    } 
-    x++;
-       }, 1500);*/
+$('#exampleModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget) // Button that triggered the modal
+  var resim = button.data('resim') // Extract info from data-* attributes
+  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var modal = $(this)
+  modal.find('.modal-body').html("<img src='"+resim+"' />")
 
+})
 
-  }
+</script>
 
-$("body").click(function(){
+<style type="text/css">
 
-  $("title").html("Sohbet");
+   .modal-dialog{
+    width:80%!important;
+    max-height:700px!important;
+    margin-top:10px!important;
+    background: none!important;
 
-});
-
-
-
- $('#yazi_kutu_al').keypress(function (e) {
- var key = e.which;
- if(key == 13)  // the enter key code
-  {
-     if(document.getElementById('enter').checked)
-    {
-       yazi_gonder();
-    }
     
   }
-});
-
-
-
-/*******************************************/
-
-
-
-
-
-
-function scroll()
-{
-  $(".chat").scrollTop($("#yazdir").height());
-  
-}
-function sohbet_temizle()
-{
-  $("#yazdir").html("Sobet Temizlendi");
-}
-
-</script>
-<script type="text/javascript">
-  function bildirim (yazi,yazan) {
-
-    var yazi = yazi.replace(/(<([^>]+)>)/ig,"");
-
-
-  // İlk kontrol tarayıcının bu özelliği destekleyip desteklemediğini sorgulamak
-  if (!("Notification" in window)) {
-    alert("Bu tarayıcı web bilgilendirme özelliğini desteklemiyor.");
-  } 
-
-  // Daha önce kullanıcı izin verdi ise
-  else if (Notification.permission === "granted") {
-    // Bilgilendirme popup'ını çıkaralım.
-    var notification = new Notification('SLC Anlık Chat : '+yazan, {
-      body: yazi, 
-      icon: 'http://i.hizliresim.com/pEAdqL.png',
-      tag: 'tag',
-      dir: 'auto',
-      lang: ''
-    });
+  .modal-content
+  {
+    border:none!important;
   }
-  
-  // Eğer onay yoksa
-  else if (Notification.permission !== 'denied') {
-    // Kullanıcıdan onay ise
-    Notification.requestPermission(function (permission) {
-      // Kullanıcı onaylamadı ise tekrar soralım
-      if (permission === "granted") {
-        // onaylarsa bilgilendirme popup'ı aç
-        var notification = new Notification('SLC Anlık Chat : '+yazan, {
-          body: yazi, 
-          icon: 'http://i.hizliresim.com/pEAdqL.png',
-          tag: 'tag',
-          dir: 'auto',
-          lang: ''
-        });
-       }
-    });
+  .modal-body
+  {
+    background: #f9f9f9!important;
+    border:none!important;
   }
-}
-</script>
+
+  .btn-primary{
+    background-color: #4080ff!important;
+    boder-color: #4080ff!important;
+
+  }
+
+</style>
+
 </html>

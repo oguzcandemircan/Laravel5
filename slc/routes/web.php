@@ -13,8 +13,8 @@
 
 
 Route::get('/', function () {
-	redirect()->route('giris');
-    return view('welcome');
+	
+    return redirect()->route('giris');
 });
 
 
@@ -77,7 +77,7 @@ Route::group(['middleware' => ['auth']], function () {
  
 	})->name('yazi_al');
 
-	Route::get('yazi_gonder','sohbetController@yazi_gonder',function(){
+	Route::post('yazi_gonder','sohbetController@yazi_gonder',function(){
 
 	})->name('yazi_gonder');
 
@@ -119,4 +119,12 @@ Route::get('mail','sohbetController@mail_gonder',function(){
 });
 
 
+Route::get('post_deneme',function()
+{
+	return view('test');	
+});
 
+Route::post('posts',function()
+{
+	return $_POST['text'];
+});
